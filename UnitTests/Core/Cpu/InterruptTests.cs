@@ -1,7 +1,7 @@
 ﻿using Xunit;
 using NEStor.Core.Cpu;
 
-namespace NEStor.Core.Cpu
+namespace UnitTests.Core.Cpu
 {
     public class InterruptTests
     {
