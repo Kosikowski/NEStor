@@ -29,27 +29,28 @@ namespace NEStor.Core.Ppu
     //       |   7 | VBlank Switch, 1 = generate interrupts on VBlank 
     public class ControlRegister
     {
-		public int NameTableX;
-		public int NameTableY;
-		public int Increment;
-		public int PatternSprite;
-		public int PatternBg;
-		public int SpriteSize;
-		public bool SlaveMode;
-		public bool EnableNMI;
+#if DEBUG
+        public int NameTableX;
+        public int NameTableY;
+        public int Increment;
+        public int PatternSprite;
+        public int PatternBg;
+        public int SpriteSize;
+        public bool SlaveMode;
+        public bool EnableNMI;
         public byte DataLatch;
-		public int Register
+        public int Register
         {
             get
             {
-				var value = NameTableX | NameTableY << 1 | PatternSprite << 3 | PatternBg << 4;
-				if (Increment > 1) value |= 0x04;
+                var value = NameTableX | NameTableY << 1 | PatternSprite << 3 | PatternBg << 4;
+                if (Increment > 1) value |= 0x04;
                 if (SpriteSize > 8) value |= 0x20;
                 if (SlaveMode) value |= 0x40;
-				if (EnableNMI) value |= 0x80;
-				return value;
-			}
-			set
+                if (EnableNMI) value |= 0x80;
+                return value;
+            }
+            set
             {
                 NameTableX = value & 0x1;
                 NameTableY = (value & 0x2) >> 1;
@@ -59,7 +60,56 @@ namespace NEStor.Core.Ppu
                 SpriteSize = (value & 0x20) != 0 ? 16 : 8;
                 SlaveMode = (value & 0x40) != 0;
                 EnableNMI = (value & 0x80) != 0;
-			}
-		}
-	}
+            }
+        }
+#else
+        private byte _reg;
+        public byte DataLatch;
+        public int NameTableX
+        {
+            get => _reg & 0x1;
+            set => _reg = (byte)((_reg & ~0x1) | (value & 0x1));
+        }
+        public int NameTableY
+        {
+            get => (_reg & 0x2) >> 1;
+            set => _reg = (byte)((_reg & ~0x2) | ((value & 0x1) << 1));
+        }
+        public int Increment
+        {
+            get => (_reg & 0x4) != 0 ? 32 : 1;
+            set => _reg = (byte)((_reg & ~0x4) | ((value > 1 ? 1 : 0) << 2));
+        }
+        public int PatternSprite
+        {
+            get => (_reg & 0x8) >> 3;
+            set => _reg = (byte)((_reg & ~0x8) | ((value & 0x1) << 3));
+        }
+        public int PatternBg
+        {
+            get => (_reg & 0x10) >> 4;
+            set => _reg = (byte)((_reg & ~0x10) | ((value & 0x1) << 4));
+        }
+        public int SpriteSize
+        {
+            get => (_reg & 0x20) != 0 ? 16 : 8;
+            set => _reg = (byte)((_reg & ~0x20) | ((value > 8 ? 1 : 0) << 5));
+        }
+        public bool SlaveMode
+        {
+            get => (_reg & 0x40) != 0;
+            set => _reg = (byte)((_reg & ~0x40) | (value ? 0x40 : 0));
+        }
+        public bool EnableNMI
+        {
+            get => (_reg & 0x80) != 0;
+            set => _reg = (byte)((_reg & ~0x80) | (value ? 0x80 : 0));
+        }
+        public int Register
+        {
+            get => _reg;
+            set => _reg = (byte)(value & 0xFF);
+        }
+#endif
+    }
 }
