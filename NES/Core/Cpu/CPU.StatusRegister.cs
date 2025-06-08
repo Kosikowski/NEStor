@@ -25,7 +25,7 @@ namespace NEStor.Core.Cpu
                 if (IrqDisable) result |= 0x04;
                 if (Decimal)    result |= 0x08;
                 if (Break)      result |= 0x10;
-                if (Unused)     result |= 0x20;
+                result |= 0x20;
                 if (Overflow)   result |= 0x40;
                 if (Negative)   result |= 0x80;
                 return result;

@@ -36,7 +36,7 @@ namespace NEStor.Core.Cpu
             };
 
             // Only Unused is set to false, so result should be 0x00
-            Assert.Equal(0x00, sr.Register);
+            Assert.Equal(0x20, sr.Register);
 
             sr = new StatusRegister
             {
@@ -50,7 +50,7 @@ namespace NEStor.Core.Cpu
                 Negative = false
             };
 
-            Assert.Equal(0x01, sr.Register);
+            Assert.Equal(0x21, sr.Register);
         }
 
         [Fact]
