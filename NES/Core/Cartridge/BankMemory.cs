@@ -3,7 +3,15 @@ using System.Collections.Generic;
 
 namespace NEStor.Core.Cartridge
 {
-    class BankMemory
+    public interface IBankMemory
+    {
+        byte this[int addr] { get; set; }
+        int BankSize { get; set; }
+        void Swap(int bankIdx, int swapBankIdx);
+        //void SwapMasked(int bankIdx, int swapBankIdx);
+    }
+
+    class BankMemory: IBankMemory
     {
         public List<byte[]> Banks = new List<byte[]>();
         public List<byte[]> SwapBanks = new List<byte[]>();
