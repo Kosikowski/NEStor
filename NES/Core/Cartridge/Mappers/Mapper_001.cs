@@ -12,7 +12,6 @@ namespace NEStor.Core.Cartridge.Mappers
         int ChrBank0;
         int ChrBank1;
         int PrgBank;
-        public int Cycle;
 
         public override void Reset()
         {
@@ -27,7 +26,7 @@ namespace NEStor.Core.Cartridge.Mappers
                 PrgBankMode = 3;
                 UpdateState();
             }
-            else if (Bus.Cpu.Cycle - Cycle != 1)
+            else if (Bus.Cpu.Cycle - Bus.Cpu.MapperIrq.Cycle > 1)
             {
                 // Load data serially into load register. It arrives LSB first.
                 LoadRegister |= (data & 0x1) << LoadRegisterCount;
@@ -45,7 +44,7 @@ namespace NEStor.Core.Cartridge.Mappers
                     UpdateState();
                 }
             }
-            Cycle = Bus.Cpu.Cycle;
+            Bus.Cpu.MapperIrq.Cycle = Bus.Cpu.Cycle;
         }
 
         int ControlRegister
